@@ -1,3 +1,4 @@
 vector_template: vector.toml.j2
 vector_config_file: /etc/vector/vector.toml
 vector_logtail_bearer_token: ""
+vector_nginx_logs_path: /var/www/html/

@@ -1,0 +1,22 @@
+galaxy_info:
+  author: Rutger
+  description: Install and configure Vector for Logtail.com
+  company: none
+  license: WTFPL
+  min_ansible_version: 2.10
+  platforms:
+    - name: Ubuntu
+      versions:
+        - bionic
+        - xenial
+    - name: Debian
+      versions:
+        - stretch
+        - buster
+  galaxy_tags:
+    - logging
+    - collector
+    - monitoring
+    - vector
+    - logtail
+dependencies: []

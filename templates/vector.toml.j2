@@ -8,7 +8,7 @@ data_dir = "/var/lib/vector"
 type = "file"
 read_from = "beginning"
 ignore_older_secs = 600
-include = ["/srv/www/werkenbij.catharinaziekenhuis.nl/logs/*.log"]
+include = ["{{ vector_nginx_logs_path }}*.log"]
 exclude = []
 
 [transforms.logtail_nginx_parser_{{ vector_logtail_bearer_token }}]
