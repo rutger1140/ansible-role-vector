@@ -2,6 +2,13 @@
 
 Configures Vector for Trellis based WordPress install. Logging is piped into logtail.com.
 
+## Log files
+
+Currently these log files are ingested:
+
+- nginx access + error logs (`/srv/www/domain.com/logs/*.log`)
+- auth log (`/var/log/auth.log`)
+
 ## Configuration
 
 - `vector_logtail_bearer_token` - add the 'Source token' from Logtail.com
