@@ -1,0 +1,5 @@
+---
+- name: Install vector
+  package:
+    name: vector
+    state: present

@@ -1,0 +1,9 @@
+---
+- name: Create repos for debian based systems
+  include_tasks: repo.yml
+
+- name: Install vector
+  include_tasks: install.yml
+
+- name: Create configuration for vector
+  include_tasks: config.yml
