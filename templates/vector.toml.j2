@@ -142,6 +142,10 @@ if .fail2ban != {} {
 
     del(.fail2ban.time)
   }
+
+  # Set fail2ban client as client_string
+  if exists(.fail2ban.client) { .client = .fail2ban.client }
+
 } else {
   del(.fail2ban)
 }
