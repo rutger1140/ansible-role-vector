@@ -51,6 +51,10 @@ if .nginx != {} {
   if is_null(.nginx.subrequest) { del(.nginx.subrequest) }
   if is_null(.nginx.upstream) { del(.nginx.upstream) }
   if is_null(.nginx.referrer) { del(.nginx.referrer) }
+
+  # Set nginx client as client_string
+  if exists(.nginx.client) { .client = .nginx.client }
+
 } else {
   del(.nginx)
 }
@@ -106,6 +110,9 @@ if .auth_log != {} {
   if exists(numbers[8].num) { .message_metadata.param9 = to_int(numbers[8].num) ?? to_float(numbers[8].num) ?? null }
   if exists(numbers[9].num) { .message_metadata.param10 = to_int(numbers[9].num) ?? to_float(numbers[9].num) ?? null }
 
+  # Set ipv4 as client_string
+  if exists(.message_metadata.ipv4_1) { .client = .message_metadata.ipv4_1 }
+
 } else {
   del(.auth_log)
 }
@@ -124,14 +131,12 @@ inputs = ["logtail_fail2ban_logs_{{ vector_logtail_bearer_token }}"]
 source = '''
 del(.source_type)
 .dt = del(.timestamp)
-.fail2ban = parse_regex(.message, r'^(?P<time>\d{4}\-\d{2}\-\d{2}\s\d{2}:\d{2}:\d{2}),\d{3}\s(.*):\s(?P<type>[A-Z]*)\s+\[(?P<jail>[^\]]+)\]\s+(?P<action>(\w+))\s+(?P<source_ip>((?:[0-9]{1,3}\.){3}[0-9]{1,3}))(.*)$') ??
+.fail2ban = parse_regex(.message, r'^(?P<time>\d{4}\-\d{2}\-\d{2}\s\d{2}:\d{2}:\d{2}),\d{3}\s(.*):\s(?P<type>[A-Z]*)\s+\[(?P<jail>[^\]]+)\]\s+(?P<action>(\w+))\s+(?P<client>((?:[0-9]{1,3}\.){3}[0-9]{1,3}))(.*)$') ??
 {}
 
 if .fail2ban != {} {
   .platform = "Fail2ban"
-  .message = del(.fail2ban.message)
 
-  if is_null(.message) { del(.message) }
   if exists(.fail2ban.time) {
     .dt = parse_timestamp(.fail2ban.time, "%Y/%m/%d %H:%M:%S") ?? now()
 
