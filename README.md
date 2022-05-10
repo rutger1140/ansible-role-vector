@@ -8,6 +8,7 @@ Currently these log files are ingested:
 
 - nginx access + error logs (`/srv/www/domain.com/logs/*.log`)
 - auth log (`/var/log/auth.log`)
+- fail2ban log (`/var/log/fail2ban.log`)
 
 ## Configuration
 
