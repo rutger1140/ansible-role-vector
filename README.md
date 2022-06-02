@@ -1,6 +1,6 @@
-# Ansible Vector for Trellis with Logtail
+# Ansible Vector for Ubuntu with Logtail
 
-Configures Vector for Trellis based WordPress install. Logging is piped into logtail.com.
+Configures Vector with Ansible for nginx, fail2ban and haproxy. Logging is piped into logtail.com.
 
 ## Log files
 
@@ -9,6 +9,7 @@ Currently these log files are ingested:
 - nginx access + error logs (`/srv/www/domain.com/logs/*.log`)
 - auth log (`/var/log/auth.log`)
 - fail2ban log (`/var/log/fail2ban.log`)
+- haproxy log (`/var/log/haproxy.log`)
 
 ## Configuration
 
