@@ -151,6 +151,58 @@ if .fail2ban != {} {
 }
 '''
 
+[sources.logtail_haproxy_logs_{{ vector_logtail_bearer_token }}]
+type = "file"
+read_from = "beginning"
+ignore_older_secs = 600
+include = ["/var/log/haproxy.log"]
+exclude = []
+
+[transforms.logtail_haproxy_parser_{{ vector_logtail_bearer_token }}]
+type = "remap"
+inputs = ["logtail_haproxy_logs_{{ vector_logtail_bearer_token }}"]
+source = '''
+del(.source_type)
+.dt = del(.timestamp)
+.haproxy = parse_regex(.message, r'^(?P<syslog>([A-Z]{1}[a-z]{2}\s*\d{0,2}\s*\d{2}:\d{2}:\d{2}))\s*(?P<syslog_host>[a-z]*-[a-z]*-[a-z0-9]*)\s*(?P<ps>\w+)\[(?P<pid>\d+)\]:\s*((?P<c_ip>[\w\.]+):(?P<c_port>\d+))\s*\[(?P<time>.+)\]\s*(?P<f_end>[\w\~-]+)\s*(?P<b_end>[\w-]+)/(?P<b_server>[<>\w\.-]+)\s*(?P<tq>\d+)/(?P<tw>[\d-]+)/(?P<tc>[\d-]+)/(?P<tr>[\d-]+)/(?P<tt>[\d-]+)\s*(?P<status_code>\d+)\s*(?P<bytes>\d+)\s*(?P<req_cookie>\S?)\s*(?P<res_cookie>\S?)\s*(?P<t_state>[\w-]+)\s*(?P<actconn>\d+)/(?P<feconn>\d+)/(?P<beconn>\d+)/(?P<srv_conn>\d+)/(?P<retries>\d+)\s*(?P<srv_queue>\d+)/(?P<backend_queue>\d+)\s*"(?P<request>[^"]*)"') ??
+{}
+
+if .haproxy != {} {
+  .platform = "HAProxy"
+
+  if exists(.haproxy.time) {
+    .dt = parse_timestamp(.haproxy.time, "%d/%b/%Y:%H:%M:%S.%f") ?? now()
+
+    del(.haproxy.time)
+  }
+
+  if is_string(.haproxy.status_code) { .haproxy.status_code = to_int(.haproxy.status_code) ?? .haproxy.status_code }
+  if exists(.haproxy.c_port) { del(.haproxy.c_port) }
+  if exists(.haproxy.actconn) { del(.haproxy.actconn) }
+  if exists(.haproxy.beconn) { del(.haproxy.beconn) }
+  if exists(.haproxy.feconn) { del(.haproxy.feconn) }
+  if exists(.haproxy.pid) { del(.haproxy.pid) }
+  if exists(.haproxy.ps) { del(.haproxy.ps) }
+  if exists(.haproxy.req_cookie) { del(.haproxy.req_cookie) }
+  if exists(.haproxy.res_cookie) { del(.haproxy.res_cookie) }
+  if exists(.haproxy.retries) { del(.haproxy.retries) }
+  if exists(.haproxy.srv_conn) { del(.haproxy.srv_conn) }
+  if exists(.haproxy.srv_queue) { del(.haproxy.srv_queue) }
+  if exists(.haproxy.syslog_host) { del(.haproxy.syslog_host) }
+  if exists(.haproxy.tc) { del(.haproxy.tc) }
+  if exists(.haproxy.tq) { del(.haproxy.tq) }
+  if exists(.haproxy.tr) { del(.haproxy.tr) }
+  if exists(.haproxy.tt) { del(.haproxy.tt) }
+  if exists(.haproxy.tw) { del(.haproxy.tw) }
+
+  # Set haproxy client as client_string
+  if exists(.haproxy.c_ip) { .client = .haproxy.c_ip }
+
+} else {
+  del(.haproxy)
+}
+'''
+
 [sinks.logtail_http_sink_{{ vector_logtail_bearer_token }}]
 type = "http"
 uri = "https://in.logtail.com/"
@@ -160,5 +212,6 @@ auth.token = "{{ vector_logtail_bearer_token }}"
 inputs = [
   "logtail_nginx_parser_{{ vector_logtail_bearer_token }}",
   "logtail_auth_log_parser_{{ vector_logtail_bearer_token }}",
-  "logtail_fail2ban_parser_{{ vector_logtail_bearer_token }}"
+  "logtail_fail2ban_parser_{{ vector_logtail_bearer_token }}",
+  "logtail_haproxy_parser_{{ vector_logtail_bearer_token }}"
 ]
