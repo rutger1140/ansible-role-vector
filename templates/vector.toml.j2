@@ -81,7 +81,7 @@ if .auth_log != {} {
   .message = del(.auth_log.message)
 
   # extract message metadata
-  tmp = to_string(.message) ?? ""
+  tmp = to_string(.message)
 
   ips = parse_regex_all!(tmp, r'\b(?P<ip>(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))\b')
   if exists(ips[0].ip) { .message_metadata.ipv4_1 = ips[0].ip; tmp = replace(tmp, string!(ips[0].ip), "") }
